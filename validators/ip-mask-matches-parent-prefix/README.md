@@ -19,6 +19,35 @@ This is a pretty common thing to want to do, and it's a good idea to make sure t
 ## Overview
 This custom validator for Netbox ensures that IP addresses have netmasks matching their parent prefix's netmask. This helps maintain network hierarchy consistency and prevents configuration errors where IP addresses might have inappropriate subnet masks for their parent networks.
 
+## Validation Flow
+```mermaid
+flowchart TD
+    A[Start Validation] --> B{Get Containing Prefixes}
+    B -->|Found| C{Check Each Prefix}
+    B -->|Not Found| D[Fail: No Parent Prefix]
+    C -->|Has Children| E[Skip to Next Prefix]
+    E --> C
+    C -->|No Children| F{Compare Netmasks}
+    F -->|Match| G[Validation Passes]
+    F -->|Don't Match| H[Fail: Netmask Mismatch]
+```
+
+## Network Structure Examples
+```mermaid
+graph TD
+    subgraph "Valid Configuration"
+    A[192.168.1.0/24] -->|valid| B[192.168.1.1/24]
+    A -->|valid| C[192.168.1.2/24]
+    A -->|valid| D[192.168.1.3/24]
+    end
+    
+    subgraph "Invalid Configuration"
+    E[192.168.1.0/24] -->|invalid| F[192.168.1.1/25]
+    E -->|invalid| G[192.168.1.2/26]
+    E -->|invalid| H[192.168.1.3/23]
+    end
+```
+
 ## Use Case
 When adding IP addresses to Netbox, it's important that their netmasks align with the prefix they belong to. For example:
 - If you have a prefix `192.168.1.0/24`, all IP addresses within this prefix should use `/24` as their netmask
