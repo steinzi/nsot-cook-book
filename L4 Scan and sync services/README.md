@@ -7,11 +7,52 @@
 
 From a chat with Marvin Cordes in netbox slack
 
-## TLDR
-you want to dump in 
+## TL;DR
+
+> **⚠️ Note:** _Steinzi: This script is not something I would recommended for production environments._
+
+Want to effortlessly populate your NetBox with Layer 4 services? This script scans your devices for common network services and seamlessly integrates them into NetBox.
+
+- Scans for 45+ common services
+- Automatically updates NetBox records
+- Helps maintain an accurate service inventory
+
+Run the script, sit back, and watch your NetBox come to life with detailed service information!
 ## Overview
 This NetBox script performs automated port scanning on devices registered in your NetBox instance. It checks for commonly used network services and ports, creating or updating service records in NetBox based on the scan results. This helps maintain an accurate inventory of running services across your infrastructure.
 
+## Workflow Diagram
+
+```mermaid
+graph TD
+    A[Start Script] --> B[Query NetBox]
+    B --> C[Get Devices with IPv4]
+    
+    C --> D{For Each Device}
+    D --> E[Get Primary IP]
+    
+    E --> F{For Each Port}
+    F --> G[Test Port Connection]
+    
+    G --> H{Port Open?}
+    H -->|Yes| I[Create/Update Service]
+    H -->|No| F
+    
+    I --> J[Add IP to Service]
+    J --> K[Add Auto-Discovery Tag]
+    K --> F
+    
+    F -->|Done| L[Log Results]
+    L --> D
+    
+    D -->|Done| M[Script Complete]
+    
+    style A fill:#9cf
+    style M fill:#9cf
+    style H fill:#ffb3b3
+    style I fill:#b3ffb3
+    style K fill:#ffffb3
+```
 
 
 ## Purpose
@@ -116,6 +157,8 @@ The script checks for the following categories of services:
 - Only scans IPv4 addresses
 - Fixed 2-second timeout per port
 - Does not verify the actual service running on the port
+- Your netbox script runner needs direct access to all the devices
+- Devices might have filtering in place firewall, routing issues etc.
 - Limited to TCP connections
 - Does not perform deep service inspection
 
