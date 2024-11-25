@@ -1,4 +1,4 @@
-# NetBox Cookbook
+# NSoT (network source of truth) [Netbox] Cookbook
 ![Status](https://img.shields.io/badge/status-beta-yellow)
 ![Community](https://img.shields.io/badge/community-driven-blue)
 ![AI Warning](https://img.shields.io/badge/contains-AI%20generated%20content-red)
